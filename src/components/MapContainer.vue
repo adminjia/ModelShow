@@ -10,6 +10,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import Config from "module/Class_Config";
+const emit = defineEmits(['callBack'])
 let position_mouse_lon = ref("");
 let position_mouse_lat = ref("");
 onMounted(() => {
@@ -28,7 +29,7 @@ onMounted(() => {
     baseLayerPicker: false,
     baseLayer: new Cesium.ImageryLayer(
       new Cesium.UrlTemplateImageryProvider({
-        url: import.meta.env.VITE_APP_MapPath,
+        url: "https://t0.tianditu.gov.cn/img_w/wmts?service=wmts&request=GetTile&version=1.0.0&layer=img&tileMatrixSet=w&TileMatrix={z}&TileRow={y}&TileCol={x}&style=default&tk=848089cab53a169cef2cabdc84c8f644",
         maximumLevel: 18,
       })
     ),
@@ -124,7 +125,10 @@ onMounted(() => {
       pitch: -1.372112402321073,
       roll: 6.283160992492669,
     },
-    duration: 2.5
+    duration: 2.5,
+    complete: () => {
+      emit('callBack')
+    },
   });
 });
 </script>
