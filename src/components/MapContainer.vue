@@ -1,0 +1,176 @@
+<template>
+  <div>
+    <div id="mapContainer"></div>
+    <div id="position_mouse">
+      <div>{{ position_mouse_lon }}</div>
+      <div>{{ position_mouse_lat }}</div>
+    </div>
+  </div>
+</template>
+<script setup>
+import { onMounted, ref } from "vue";
+import Config from "module/Class_Config";
+let position_mouse_lon = ref("");
+let position_mouse_lat = ref("");
+onMounted(() => {
+  let viewer = new Cesium.Viewer("mapContainer", {
+    animation: false,
+    fullscreenButton: false,
+    homeButton: false,
+    geocoder: false,
+    infoBox: false,
+    sceneModePicker: false,
+    selectionIndicator: false,
+    timeline: true,
+    navigationHelpButton: false,
+    navigationInstructionsInitiallyVisible: false,
+    scene3DOnly: true,
+    baseLayerPicker: false,
+    baseLayer: new Cesium.ImageryLayer(
+      new Cesium.UrlTemplateImageryProvider({
+        url: import.meta.env.VITE_APP_MapPath,
+        maximumLevel: 18,
+      })
+    ),
+    mapProjection: new Cesium.WebMercatorProjection(),
+    contextOptions: {
+      webgl: {
+        alpha: true,
+        depth: true,
+        stencil: true,
+        antialias: true,
+        premultipliedAlpha: true,
+        preserveDrawingBuffer: true,
+        failIfMajorPerformanceCaveat: true,
+      }
+    },
+  });
+  var start = Cesium.JulianDate.fromIso8601("2024-09-10");
+  var end = Cesium.JulianDate.fromIso8601("2024-09-20");
+  viewer.timeline.zoomTo(start, end);
+  var clock = viewer.clock;
+  clock.startTime = start;
+  clock.endTime = end;
+  clock.currentTime = Cesium.JulianDate.fromIso8601("2024-09-10T04:00:00Z");
+  viewer.timeline.container.style.visibility = "hidden";
+
+  viewer._cesiumWidget._creditContainer.style.display = "none";
+  // 移动缩放阻尼
+  viewer.scene.screenSpaceCameraController.inertiaSpin = 0.8;
+  viewer.scene.screenSpaceCameraController.inertiaTranslate = 0.8;
+  viewer.scene.screenSpaceCameraController.inertiaZoom = 0.8;
+  // 其他设置
+  Cesium.Camera.DEFAULT_VIEW_RECTANGLE = Cesium.Rectangle.fromDegrees(
+    104.87054120013558,
+    34.848076238702866,
+    129.11722879902956,
+    43.46664918800348
+  );
+  viewer.scene.skyBox.show = false;
+  viewer.scene.backgroundColor = new Cesium.Color(0.0, 0.0, 0.0, 0.0);
+  viewer.scene.sun.show = false;
+  viewer.scene.moon.show = false;
+  viewer.scene.globe.enableLighting = false;
+  viewer.scene.light = new Cesium.DirectionalLight({
+    color: new Cesium.Color(1.0, 1.0, 1.0, 1.0),
+    direction: new Cesium.Cartesian3(6.435314, 135.960521, 700.0),
+  });
+  viewer.shadows = false;
+  viewer.scene.screenSpaceCameraController.maximumZoomDistance = 32784836;
+  // 禁用双击
+  viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(
+    Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK
+  );
+  // 深度检测
+  viewer.scene.globe.depthTestAgainstTerrain = false;
+  // 地下模式
+  viewer.scene.screenSpaceCameraController.enableCollisionDetection = true;
+  // 指北针
+  viewer.extend(Cesium.viewerCesiumNavigationMixin, {
+    enableCompass: true,
+    enableZoomControls: false,
+    enableDistanceLegend: false,
+    enableCompassOuterRing: false,
+  });
+  window.viewer = viewer;
+  // 鼠标经纬度坐标
+  let handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+  handler.setInputAction(function (movement) {
+    var cartesian = viewer.camera.pickEllipsoid(
+      movement.endPosition,
+      viewer.scene.globe.ellipsoid
+    );
+    if (cartesian) {
+      let cartographic = viewer.scene.globe.ellipsoid.cartesianToCartographic(cartesian);
+      let lat = Cesium.Math.toDegrees(cartographic.latitude).toFixed(4);
+      let lon = Cesium.Math.toDegrees(cartographic.longitude).toFixed(3);
+      position_mouse_lon.value = `${lon > 0 ? "东经" : "西经"}：${Math.abs(
+        lon
+      )}°`;
+      position_mouse_lat.value = `${lat > 0 ? "北纬" : "南纬"}：${Math.abs(
+        lat
+      )}°`;
+    }
+  }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+  Config.Viewer = viewer;
+  Config.Viewer.camera.flyTo({
+    destination: {
+      x: -3251322.8743628743,
+      y: 8569648.503039047,
+      z: 1886807.6140819995,
+    },
+    orientation: {
+      heading: 0.002532222616408397,
+      pitch: -1.372112402321073,
+      roll: 6.283160992492669,
+    },
+    duration: 2.5
+  });
+});
+</script>
+<style scoped>
+#mapContainer {
+  position: absolute;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #000000;
+  z-index: -2;
+}
+
+#position_mouse {
+  position: absolute;
+  text-align: left;
+  display: flex;
+  bottom: 1vh;
+  right: 150px;
+  font-size: 1.6vh;
+  color: #000;
+  z-index: 1;
+}
+
+#position_mouse>div {
+  margin: 0 1vh;
+}
+</style>
+<style>
+.cesium-widget-cesiumNavigationContainer {
+  position: absolute;
+  bottom: 24vh;
+  right: 4.5vw;
+  z-index: 3;
+}
+
+.distance-legend {
+  right: -4vw;
+  top: 29vh;
+}
+
+.navigation-controls {
+  background-color: rgba(47, 53, 60, 0.8);
+}
+</style>
