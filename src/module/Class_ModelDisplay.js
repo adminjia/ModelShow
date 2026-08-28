@@ -54,15 +54,21 @@ export default {
             orientation: Cesium.Transforms.headingPitchRollQuaternion(
                 position,
                 new Cesium.HeadingPitchRoll(
-                    Cesium.Math.toRadians(90), // heading: 绕Z轴旋转，调整朝向
-                    Cesium.Math.toRadians(0),   // pitch: 俯仰
-                    Cesium.Math.toRadians(0)    // roll: 翻滚
+                    Cesium.Math.toRadians(90),
+                    Cesium.Math.toRadians(0),
+                    Cesium.Math.toRadians(0)
                 )
             ),
             model: {
                 uri: find.url,
                 minimumPixelSize: 128,
-                maximumScale: 20000
+                maximumScale: 20000,
+                color: Cesium.Color.fromCssColorString('#1ab0a9').withAlpha(0.3),
+                colorBlendMode: Cesium.ColorBlendMode.MIX,
+                colorBlendAmount: 1,
+                silhouette: true,
+                silhouetteColor: Cesium.Color.fromCssColorString('#1ab0a9'),
+                silhouetteSize: 2,
             }
         })
 
