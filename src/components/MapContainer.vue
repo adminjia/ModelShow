@@ -1,18 +1,13 @@
 <template>
   <div>
     <div id="mapContainer"></div>
-    <div id="position_mouse">
-      <div>{{ position_mouse_lon }}</div>
-      <div>{{ position_mouse_lat }}</div>
-    </div>
   </div>
 </template>
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted } from "vue";
 import Config from "module/Class_Config";
 const emit = defineEmits(['callBack'])
-let position_mouse_lon = ref("");
-let position_mouse_lat = ref("");
+
 onMounted(() => {
   let viewer = new Cesium.Viewer("mapContainer", {
     animation: false,
@@ -84,52 +79,12 @@ onMounted(() => {
   );
   // 深度检测
   viewer.scene.globe.depthTestAgainstTerrain = false;
+  viewer.scene.globe.translucency.enabled = true
+  // viewer.scene.globe.translucency.frontFaceAlpha = 0.3
   // 地下模式
-  viewer.scene.screenSpaceCameraController.enableCollisionDetection = true;
-  // 指北针
-  viewer.extend(Cesium.viewerCesiumNavigationMixin, {
-    enableCompass: true,
-    enableZoomControls: false,
-    enableDistanceLegend: false,
-    enableCompassOuterRing: false,
-  });
-  window.viewer = viewer;
-  // 鼠标经纬度坐标
-  let handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
-  handler.setInputAction(function (movement) {
-    var cartesian = viewer.camera.pickEllipsoid(
-      movement.endPosition,
-      viewer.scene.globe.ellipsoid
-    );
-    if (cartesian) {
-      let cartographic = viewer.scene.globe.ellipsoid.cartesianToCartographic(cartesian);
-      let lat = Cesium.Math.toDegrees(cartographic.latitude).toFixed(4);
-      let lon = Cesium.Math.toDegrees(cartographic.longitude).toFixed(3);
-      position_mouse_lon.value = `${lon > 0 ? "东经" : "西经"}：${Math.abs(
-        lon
-      )}°`;
-      position_mouse_lat.value = `${lat > 0 ? "北纬" : "南纬"}：${Math.abs(
-        lat
-      )}°`;
-    }
-  }, Cesium.ScreenSpaceEventType.MOUSE_MOVE);
+  viewer.scene.screenSpaceCameraController.enableCollisionDetection = false;
   Config.Viewer = viewer;
-  Config.Viewer.camera.flyTo({
-    destination: {
-      x: -3251322.8743628743,
-      y: 8569648.503039047,
-      z: 1886807.6140819995,
-    },
-    orientation: {
-      heading: 0.002532222616408397,
-      pitch: -1.372112402321073,
-      roll: 6.283160992492669,
-    },
-    duration: 2.5,
-    complete: () => {
-      emit('callBack')
-    },
-  });
+  emit('callBack')
 });
 </script>
 <style scoped>
@@ -144,37 +99,5 @@ onMounted(() => {
   overflow: hidden;
   background-color: #000000;
   z-index: -2;
-}
-
-#position_mouse {
-  position: absolute;
-  text-align: left;
-  display: flex;
-  bottom: 1vh;
-  right: 150px;
-  font-size: 1.6vh;
-  color: #000;
-  z-index: 1;
-}
-
-#position_mouse>div {
-  margin: 0 1vh;
-}
-</style>
-<style>
-.cesium-widget-cesiumNavigationContainer {
-  position: absolute;
-  bottom: 24vh;
-  right: 4.5vw;
-  z-index: 3;
-}
-
-.distance-legend {
-  right: -4vw;
-  top: 29vh;
-}
-
-.navigation-controls {
-  background-color: rgba(47, 53, 60, 0.8);
 }
 </style>
