@@ -50,6 +50,11 @@ onMounted(() => {
   clock.currentTime = Cesium.JulianDate.fromIso8601("2024-09-10T04:00:00Z");
   viewer.timeline.container.style.visibility = "hidden";
   viewer._cesiumWidget._creditContainer.style.display = "none";
+  // 抗锯齿
+  if (Cesium.FeatureDetection.supportsImageRenderingPixelated()) {
+    viewer.resolutionScale = window.devicePixelRatio
+  }
+  viewer.scene.postProcessStages.fxaa.enabled = true
   // 关闭大气层
   viewer.scene.globe.showGroundAtmosphere = false;
   // 移动缩放阻尼

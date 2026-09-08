@@ -80,11 +80,11 @@ export default {
             ),
             model: {
                 uri: find.url,
-                color: Cesium.Color.fromCssColorString('#1ab0a9'),
+                color: Cesium.Color.fromCssColorString('#00fff3'),
                 colorBlendMode: Cesium.ColorBlendMode.MIX,
                 colorBlendAmount: 1,
                 silhouette: true,
-                silhouetteColor: Cesium.Color.fromCssColorString('#1ab0a9'),
+                silhouetteColor: Cesium.Color.fromCssColorString('#00fff3'),
                 silhouetteSize: 2,
             }
         })
@@ -120,11 +120,11 @@ export default {
                 ),
                 model: {
                     uri: find.url,
-                    color: Cesium.Color.fromCssColorString('#1ab0a9'),
+                    color: Cesium.Color.fromCssColorString('#5d7a8a'),
                     colorBlendMode: Cesium.ColorBlendMode.MIX,
                     colorBlendAmount: 1,
                     silhouette: true,
-                    silhouetteColor: Cesium.Color.fromCssColorString('#1ab0a9'),
+                    silhouetteColor: Cesium.Color.fromCssColorString('#3d5560'),
                     silhouetteSize: 2,
                 }
             })
