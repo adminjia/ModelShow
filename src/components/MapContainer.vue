@@ -49,19 +49,13 @@ onMounted(() => {
   clock.endTime = end;
   clock.currentTime = Cesium.JulianDate.fromIso8601("2024-09-10T04:00:00Z");
   viewer.timeline.container.style.visibility = "hidden";
-
   viewer._cesiumWidget._creditContainer.style.display = "none";
+  // 关闭大气层
+  viewer.scene.globe.showGroundAtmosphere = false;
   // 移动缩放阻尼
   viewer.scene.screenSpaceCameraController.inertiaSpin = 0.8;
   viewer.scene.screenSpaceCameraController.inertiaTranslate = 0.8;
   viewer.scene.screenSpaceCameraController.inertiaZoom = 0.8;
-  // 其他设置
-  Cesium.Camera.DEFAULT_VIEW_RECTANGLE = Cesium.Rectangle.fromDegrees(
-    104.87054120013558,
-    34.848076238702866,
-    129.11722879902956,
-    43.46664918800348
-  );
   viewer.scene.skyBox.show = false;
   viewer.scene.backgroundColor = new Cesium.Color(0.0, 0.0, 0.0, 0.0);
   viewer.scene.sun.show = false;
@@ -72,19 +66,30 @@ onMounted(() => {
     direction: new Cesium.Cartesian3(6.435314, 135.960521, 700.0),
   });
   viewer.shadows = false;
-  viewer.scene.screenSpaceCameraController.maximumZoomDistance = 32784836;
+  // 限制缩放范围
+  viewer.scene.screenSpaceCameraController.maximumZoomDistance = 10000;
   // 禁用双击
   viewer.cesiumWidget.screenSpaceEventHandler.removeInputAction(
     Cesium.ScreenSpaceEventType.LEFT_DOUBLE_CLICK
   );
   // 深度检测
-  viewer.scene.globe.depthTestAgainstTerrain = false;
-  viewer.scene.globe.translucency.enabled = true
-  // viewer.scene.globe.translucency.frontFaceAlpha = 0.3
-  // 地下模式
+  viewer.scene.globe.depthTestAgainstTerrain = true;
+  // 半透明
+  viewer.scene.globe.translucency.enabled = true;
+  viewer.scene.globe.translucency.frontFaceAlpha = 0.8;
+  // 禁用相机对地形的碰撞
   viewer.scene.screenSpaceCameraController.enableCollisionDetection = false;
+  // 相机初始角度
+  viewer.camera.setView({
+    destination: Cesium.Cartesian3.fromDegrees(113.939565, 22.488431, 1500),
+    orientation: {
+      heading: Cesium.Math.toRadians(0),
+      pitch: Cesium.Math.toRadians(-60),
+      roll: 0
+    }
+  });
   Config.Viewer = viewer;
-  emit('callBack')
+  emit('callBack');
 });
 </script>
 <style scoped>

@@ -29,7 +29,26 @@ const glbList = [
         }
     }
 ]
-
+const referenceModel = [
+    {
+        name: "望海路第二段",
+        url: "./3D/望海路第二段.glb",
+        position: {
+            lat: 22.486711,
+            lon: 113.936732,
+            height: -14.167878
+        }
+    },
+    {
+        name: "望海路第三段",
+        url: "./3D/望海路第三段.glb",
+        position: {
+            lat: 22.489524,
+            lon: 113.942043,
+            height: -6.772273
+        }
+    }
+]
 export default {
     LoadModel(params) {
         // 查找对应模型
@@ -61,9 +80,7 @@ export default {
             ),
             model: {
                 uri: find.url,
-                minimumPixelSize: 128,
-                maximumScale: 20000,
-                color: Cesium.Color.fromCssColorString('#1ab0a9').withAlpha(0.3),
+                color: Cesium.Color.fromCssColorString('#1ab0a9'),
                 colorBlendMode: Cesium.ColorBlendMode.MIX,
                 colorBlendAmount: 1,
                 silhouette: true,
@@ -73,6 +90,44 @@ export default {
         })
 
         viewer.trackedEntity = entity
-        viewer.flyTo(entity)
+        viewer.flyTo(entity, {
+            duration: 1,
+            offset: new Cesium.HeadingPitchRange(
+                Cesium.Math.toRadians(345.06),
+                Cesium.Math.toRadians(-15),
+                200
+            )
+        });
+    },
+    LoadReferenceModel() {
+        const viewer = Class_Config.Viewer
+        referenceModel.forEach(find => {
+            const position = Cesium.Cartesian3.fromDegrees(
+                find.position.lon,
+                find.position.lat,
+                find.position.height
+            )
+            viewer.entities.add({
+                name: find.name,
+                position: position,
+                orientation: Cesium.Transforms.headingPitchRollQuaternion(
+                    position,
+                    new Cesium.HeadingPitchRoll(
+                        Cesium.Math.toRadians(90),
+                        Cesium.Math.toRadians(0),
+                        Cesium.Math.toRadians(0)
+                    )
+                ),
+                model: {
+                    uri: find.url,
+                    color: Cesium.Color.fromCssColorString('#1ab0a9'),
+                    colorBlendMode: Cesium.ColorBlendMode.MIX,
+                    colorBlendAmount: 1,
+                    silhouette: true,
+                    silhouetteColor: Cesium.Color.fromCssColorString('#1ab0a9'),
+                    silhouetteSize: 2,
+                }
+            })
+        })
     }
 }

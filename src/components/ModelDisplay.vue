@@ -34,5 +34,7 @@ onMounted(() => {
     const modelName = getModelFromURL();
     // 获取模型
     Class_ModelDisplay.LoadModel(modelName);
+    // 加载参照模型
+    Class_ModelDisplay.LoadReferenceModel();
 });
 </script>
