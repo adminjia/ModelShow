@@ -1,5 +1,6 @@
 import Class_Config from "module/Class_Config"
 
+// 直接加载
 const glbList = [
     {
         name: "地铁13号线宗海",
@@ -26,6 +27,51 @@ const glbList = [
             lat: 22.488392,
             lon: 113.939565,
             height: -8.999351
+        }
+    },
+    {
+        name: "码头",
+        url: "./3D/码头.glb",
+        position: {
+            lat: 22.5296786701,
+            lon: 113.8840526034,
+            height: 0
+        }
+    },
+    {
+        name: "港池",
+        url: "./3D/港池.glb",
+        position: {
+            lat: 22.5296261090,
+            lon: 113.8838322180,
+            height: 0
+        }
+    },
+    {
+        name: "疏浚1",
+        url: "./3D/疏浚1.glb",
+        position: {
+            lat: 22.5294043214,
+            lon: 113.8838064887,
+            height: 0
+        }
+    },
+    {
+        name: "疏浚2",
+        url: "./3D/疏浚2.glb",
+        position: {
+            lat: 22.5294438889,
+            lon: 113.8840522222,
+            height: 0
+        }
+    },
+    {
+        name: "疏浚3",
+        url: "./3D/疏浚3.glb",
+        position: {
+            lat: 22.5298648558,
+            lon: 113.8839581842,
+            height: 0
         }
     }
 ]
@@ -94,8 +140,7 @@ export default {
             duration: 1,
             offset: new Cesium.HeadingPitchRange(
                 Cesium.Math.toRadians(345.06),
-                Cesium.Math.toRadians(-15),
-                200
+                Cesium.Math.toRadians(-15)
             )
         });
     },
